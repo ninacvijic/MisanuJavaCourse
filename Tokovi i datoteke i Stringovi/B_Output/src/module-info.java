@@ -1,0 +1,2 @@
+module B_Output {
+}
