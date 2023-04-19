@@ -1,0 +1,2 @@
+module VIII_KoriscenjeKlaseBezImporta {
+}

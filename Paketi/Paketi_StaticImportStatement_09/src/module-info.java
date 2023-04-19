@@ -1,0 +1,2 @@
+module IX_StaticImportStatement {
+}
