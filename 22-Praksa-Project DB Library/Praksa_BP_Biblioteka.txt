@@ -1,0 +1,154 @@
+Create Database praksa_biblioteka;
+
+CREATE TABLE biblioteke(
+    bibliotekaID int PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    naziv varchar(45),
+    ulica varchar(45),
+    broj varchar(45),
+    grad varchar(45),
+    mesto varchar(45),
+    telefon varchar(45)
+    )ENGINE = INNODB
+
+CREATE TABLE clanovi(
+    clanID int PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    ime varchar(45),
+    prezime varchar(45),
+    datumRodjenja date,
+    brojClanskeKarte varchar(45),
+    datumUpisa date,
+    ulica varchar(45),
+    broj varchar(45),
+    grad varchar(45),
+    telefon varchar(45),
+    bibliotekaID int,
+    FOREIGN key(bibliotekaID) REFERENCES biblioteke(bibliotekaID)
+    on update CASCADE
+    on delete no action
+    )ENGINE= INNODB
+ 
+CREATE TABLE bibliotekari(
+    JMBG int(13) PRIMARY KEY NOT NULL,
+    ime varchar(45),
+    prezime varchar(45),
+    sifraZaposlenog varchar(45),
+    ulica varchar(45),
+    broj varchar(45),
+    grad varchar(45),
+    telefon varchar(45),
+    bibliotekaID int,
+    FOREIGN key(bibliotekaID) REFERENCES biblioteke(bibliotekaID)
+    on update CASCADE
+    on delete no action
+    )ENGINE= INNODB
+ 
+CREATE TABLE izdavanja(
+    izdavanjeID int PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    datumIzdavanja Date,
+    datumVracanja Date,
+    clanID int,
+    JMBG int(13),
+    FOREIGN key(clanID) REFERENCES clanovi(clanID)
+    on update CASCADE
+    on delete no action,
+    FOREIGN key(JMBG) REFERENCES bibliotekari(JMBG)
+    on update CASCADE
+    on delete no action
+    )ENGINE= INNODB
+
+CREATE TABLE knjige(
+    ISBN int PRIMARY KEY NOT NULL,            # Each different language edition of a book will need its own ISBN.(The International ISBN Agency)
+    naziv varchar(45),
+    bibliotekaID int,
+    izdavanjeID int,
+    FOREIGN key(bibliotekaID) REFERENCES biblioteke(bibliotekaID)
+    on update CASCADE
+    on delete no action,
+    FOREIGN key(izdavanjeID) REFERENCES izdavanja(izdavanjeID)
+    on update CASCADE
+    on delete no action
+    )ENGINE= INNODB
+
+create TABLE autori(
+    autorID int PRIMARY KEY AUTO_INCREMENT NOT null,
+    imeAutora varchar(45),
+    prezimeAutora varchar(45)
+    ) ENGINE = INNODB;
+
+create TABLE knjigeautori(
+    knjigaautorID int PRIMARY KEY AUTO_INCREMENT not null,
+    ISBN int,
+    autorID int
+    )ENGINE = INNODB;
+
+alter table knjigeautori
+add FOREIGN KEY(ISBN) REFERENCES knjige(ISBN)
+ON UPDATE CASCADE
+on DELETE NO ACTION
+
+ALTER TABLE knjigeautori 
+ADD FOREIGN KEY (autorID) references autori(autorID)
+ON UPDATE CASCADE
+on DELETE no ACTION
+
+create table jezici(
+    jezikID int PRIMARY KEY AUTO_INCREMENT not null,
+    naziv varchar(45)
+    )ENGINE = INNODB;
+
+create table izdavaci(
+    izdavacID int PRIMARY KEY AUTO_INCREMENT not null,
+    naziv varchar(45)
+    )ENGINE = INNODB;
+
+alter table knjige
+add column jezikID int
+
+ALTER table knjige
+add FOREIGN KEY(jezikID) REFERENCES jezici(jezikID)
+ON UPDATE CASCADE
+ON DELETE no ACTION
+
+alter table knjige
+add column izdavacID int
+
+ALTER table knjige
+add FOREIGN KEY(izdavacID) REFERENCES izdavaci(izdavacID)
+ON UPDATE CASCADE
+ON DELETE no ACTION
+
+CREATE TABLE odeljenja(
+    odeljenjeID int PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    naziv ENUM("decije", "pozajmno", "naucno"),
+    uzrast varchar(45),
+    aktuelnost varchar(45),
+    zanr varchar(45),
+    nazivNaucneOblasti varchar(45)
+    )ENGINE = INNODB
+
+ALTER TABLE odeljenja
+add FOREIGN KEY(odeljenjeID) REFERENCES knjige(ISBN)
+
+
+INSERT INTO `biblioteke`( `naziv`, `ulica`, `broj`, `grad`, `mesto`, `telefon`) VALUES ('Gradska','Ognjena','83','Banja Luka','Karanovac','065/235879'), ('Glavna','Gospodska','23','Banja Luka','Jagare','065/868546')
+
+INSERT INTO `clanovi`( `ime`, `prezime`, `datumRodjenja`, `brojClanskeKarte`, `datumUpisa`, `ulica`, `broj`, `grad`, `telefon`, `bibliotekaID`) VALUES ('Nina','Cvijic','2000-01-01','25/65','2023-01-05','Drage Malica','1','Nis','061589745','1'),('Petar','Tomic','2010-01-28','897/21','2015-03-05','Kosovska','58','Kragujevac','061548745','2')
+
+INSERT INTO `bibliotekari`(`JMBG`, `ime`, `prezime`, `sifraZaposlenog`, `ulica`, `broj`, `grad`, `telefon`, `bibliotekaID`) VALUES ('1802990105','Uros','Rosic','k08','Pariska','74','Banja Luka','061/4587459','1'),('0701992523','Ana','Pavlovic','kgh82','Koranska','25','Banja Luka','061/4587413','2')
+
+INSERT INTO `izdavanja`( `datumIzdavanja`, `datumVracanja`, `clanID`, `JMBG`) VALUES ('2023-04-03','2023-05-03','1','701992523'),('2023-03-10','2023-03-25','2','1802990105')
+
+INSERT INTO `autori`( `imeAutora`, `prezimeAutora`) VALUES ('Elena','Ferante'), ('Frederik','Bakman')
+
+INSERT INTO `jezici`( `naziv`) VALUES ('srpski'), ('engleski')
+
+INSERT INTO `izdavaci`( `naziv`) VALUES ('Grafikon'),('DoKomerc')
+
+INSERT INTO `knjige`(`ISBN`, `naziv`, `bibliotekaID`, `izdavanjeID`, `jezikID`, `izdavacID`) VALUES ('11111','Mracna Kci','1','1','1','1'),('22222','Uznemireni ljudi','2','2','2','2')
+
+INSERT INTO `knjigeautori`(`ISBN`, `autorID`) VALUES ('11111','1'),('22222','2')
+
+INSERT INTO `odeljenja`(`odeljenjeID`, `naziv`, `uzrast`, `aktuelnost`, `zanr`, `nazivNaucneOblasti`) VALUES ('11111','decije','5god',' ' , ' ' , ' '),('22222','pozajmno', ' ' ,'bestseller','komedija', ' ')
+
+
+ 
